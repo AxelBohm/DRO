@@ -1,0 +1,354 @@
+\documentclass{scrartcl}
+
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{bbm}
+
+
+% d for integral
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+%\newcommand{\interior}[]{}
+\DeclareMathOperator*{\interior}{int}
+\DeclareMathOperator*{\cl}{cl}
+\newcommand{\ball}{\mathcal{B}}
+\newcommand{\cvar}{\textup{CVaR}}
+
+\begin{document}
+
+\section*{Problem 1}
+\label{sec:problem_one}
+
+\subsection*{Worst case of being safe}
+\label{sec:safe}
+We consider the problem of worst case probabilities given by
+\begin{equation}
+  \label{eq:op_safe}
+  \inf_{\P \in \ball_{\rho}(\hat{\P}_{N})} \P \left( \tilde{z} \in \interior (Q) \right).
+\end{equation}
+First, let us write out the constraints explicitly by using the defintion of the Wasserstein metric
+\begin{equation}
+  \label{eq:reform}
+  \begin{aligned}
+  & \inf_{\Pi, \P}  & & \P (\tilde{z} \in \interior (Q)) \\
+  & \text{s.t.}    & & \int \lVert x-y  \rVert \diff \Pi(x,y) \le \rho \\
+  \end{aligned}
+\end{equation}
+where $\Pi$ lives on the space of measures on $\R^d \times \R^d$ and has marginal
+distributions $\P$ and $\hat{\P}_{N}$.
+Due to the special, finite structure of $\hat{\P}_{N}$ the measure $\Pi$ can be
+expressed as
+\begin{equation}
+  \label{eq:joint}
+  \Pi = \frac{1}{N} \sum_{i=1}^N \delta_{\hat{z}_i} \times \P_i 
+\end{equation}
+where $\P_i$ are arbitrary measures on $\R^d$.
+See e.g. \cite{kuhn2015dd-dro-wasserstein} for more in depth arguments.
+By the virtue of \eqref{eq:joint} we can rewrite \eqref{eq:reform} as
+\begin{equation}
+  \label{eq:reform_sum}
+  \begin{aligned}
+ &   \inf_{\P_i}  & & \frac{1}{N} \sum_{i=1}^N \int \mathbbm{1}_{\interior(Q)} \diff \P_i \\
+ &   \text{s.t.} & & \frac{1}{N} \sum_{i=1}^N \int \lVert x-\hat{z}_i  \rVert \diff \P_i(x) \le \rho.
+  \end{aligned}
+\end{equation}
+We introduce a Lagrange multiplier $\lambda$ and rewrite \eqref{eq:reform_sum} as
+an unconstrained saddlepoint problem
+\begin{equation}
+  \label{eq:reform_saddle}
+  \begin{aligned}
+ &   \inf_{\P_i} \, \sup_{\lambda \ge 0} & & \frac{1}{N} \sum_{i=1}^N \int \mathbbm{1}_{\interior(Q)} \diff \P_i + \lambda \left(\frac{1}{N} \sum_{i=1}^N \int \lVert x-\hat{z}_i  \rVert \diff \P_i(x) - \rho\right). \\
+  \end{aligned}
+\end{equation}
+Next, we combine the two integrals and use strong duality (see
+\cite{kuhn2015dd-dro-wasserstein}, and in particular \cite[Proposition 3.4]{shapiro2001duality}) in order to exchange $\sup$ and $\inf$, which yields
+\begin{equation}
+  \label{eq:reform_strong_duality}
+  \begin{aligned}
+   & \sup_{\lambda \ge 0} \, \inf_{\P_i}  & & \frac{1}{N} \sum_{i=1}^N \int \mathbbm{1}_{\interior(Q)} + \lambda \lVert x-\hat{z}_i \rVert \diff \P_i(x) - \lambda\rho. \\
+  \end{aligned}
+\end{equation}
+Since, the minimization over all the measures $\P_i$ is seperable and because
+$\P_i$ may also be a Dirac distribution the individual integrals are minimized at
+the point minimizing the expression inside the integral, giving
+\begin{equation}
+  \label{eq:reform_pointwise_inf}
+  \begin{aligned}
+   & \sup_{\lambda \ge 0} & & \frac{1}{N} \sum_{i=1}^N \inf_{x} \mathbbm{1}_{\interior(Q)}(x) + \lambda \lVert x-\hat{z}_i \rVert - \lambda\rho. \\
+  \end{aligned}
+\end{equation}
+By introducing auxiliary epigraphical variables $s_i$ for $i \in \{1,\dots,N\}$ we get
+\begin{equation}
+  \label{eq:reform_slack}
+  \begin{aligned}
+    & \sup_{\lambda \ge 0, s_i} & & \frac{1}{N} \sum_{i=1}^N s_i - \lambda\rho. \\
+    & \text{s.t.} & & \inf_{x} \mathbbm{1}_{\interior(Q)}(x) + \lambda \lVert x-\hat{z}_i \rVert \geq s_i, \, \forall i \in \{1,\dots,N\}.
+  \end{aligned}
+\end{equation}
+Next up we want to rewrite the function $\mathbbm{1}_{\interior(Q)}(\cdot)$ as a
+minimum of convex lsc functions. For this reason we define $\forall j \in \{1,\dots,N\}$ the functions
+\begin{equation}
+  \begin{aligned}
+   l_j(x) :=
+   \begin{cases}
+     0 & \langle {a_j, x} \rangle \geq b_j \\
+     +\infty & \text{otherwise}
+   \end{cases}
+  \end{aligned}
+\end{equation}
+and
+\begin{equation*}
+  l_{N+1}(x) := 1.
+\end{equation*}
+It is clear that $\mathbbm{1}_{\interior(Q)}(x) = \min_{1\le i \le N+1} l_i(x)$.
+With this in mind we can rewrite \eqref{eq:reform_slack} in the following way
+\begin{equation}
+  \label{eq:reform-min}
+  \begin{aligned}
+    & \sup_{\lambda \ge 0, s_i} & & \frac{1}{N} \sum_{i=1}^N s_i - \lambda\rho. \\
+    & \text{s.t.} & & l_j(x) + \lambda \lVert x-\hat{z}_i \rVert \geq s_i, \, \forall i \in \{1,\dots,N\}, \forall j \in \{1,\dots,N+1\}, \forall x.
+  \end{aligned}
+\end{equation}
+Now we rewrite problem \eqref{eq:reform-min} again 
+\begin{equation*}
+  \begin{aligned}
+    & \sup_{\lambda \ge 0, s_i, v_i} & & \frac{1}{N} \sum_{i=1}^N s_i - \lambda\rho. \\
+    & \text{s.t.} & & \inf_x \{l_j(x) + \max_{v_i:\lVert {v_i} \rVert_*\le\lambda}\langle v_i, x-\hat{z}_i \rangle \} \geq s_i, \, \forall i \in \{1,\dots,N\}, \forall j \in \{1,\dots,N+1\}
+  \end{aligned}
+\end{equation*}
+where we basically used a consequence of Hahn-Banach to rewrite the norm as a
+maximum of linear functionals. Now we use strong duality in orde to exchange the
+order of minimum and maximum giving
+\begin{equation*}
+  \begin{aligned}
+    & \sup_{\lambda \ge 0, s_i,v_i} & & \frac{1}{N} \sum_{i=1}^N s_i - \lambda\rho. \\
+    & \text{s.t.} & & \max_{v_i:\lVert {v_i} \rVert_*\le\lambda}\inf_x \{l_j(x) + \langle v_i, x-\hat{z}_i \rangle \} \geq s_i, \, \forall i \in \{1,\dots,N\}, \forall j \in \{1,\dots,N+1\}
+  \end{aligned}
+\end{equation*}
+Next, the maximization over $v_i$ can simply be written as a constraint and we
+also multiply all inequalities by $-1$, which yields
+\begin{equation*}
+  \begin{aligned}
+    & \sup_{\lambda \ge 0, s_i,v_i} & & \frac{1}{N} \sum_{i=1}^N s_i - \lambda\rho. \\
+    & \text{s.t.} & & \sup_x \{ \langle v_i, x \rangle - l_j(x) \} - \langle {v_i, \hat{z}_i} \rangle \le - s_i, \, \forall i \in \{1,\dots,N\}, \forall j \in \{1,\dots,N+1\} \\
+    & & & \lVert {v_i} \rVert_*\le\lambda, \, \forall i \in \{1,\dots,N\}.
+  \end{aligned}
+\end{equation*}
+Using the convex conjugate we get
+\begin{equation*}
+  \begin{aligned}
+    & \sup_{\lambda \ge 0, s_i,v_i} & & \frac{1}{N} \sum_{i=1}^N s_i - \lambda\rho. \\
+    & \text{s.t.} & & l_j^*(v_i) - \langle {v_i, \hat{z}_i} \rangle \le - s_i, \, \forall i \in \{1,\dots,N\}, \forall j \in \{1,\dots,N+1\} \\
+    & & & \lVert {v_i} \rVert_*\le\lambda, \, \forall i \in \{1,\dots,N\}.
+  \end{aligned}
+\end{equation*}
+This clearly a finite convex program, so we accomplished our main goal.
+
+\subsection*{Worst case of being unsafe}
+\label{sec:unsafe}
+We consider the following problem
+\begin{equation}
+  \label{eq:op_unsafe}
+  \inf_{\P \in \ball_{\rho}(\hat{\P}_{N})} \P \left( \tilde{z} \not\in \cl(Q) \right).
+\end{equation}
+Via the same lines of reasoning as above we can deduce the following reformulation
+\begin{equation}
+  \label{eq:reform_copy}
+  \begin{aligned}
+    & \sup_{\lambda \ge 0, s_i} & & \frac{1}{N} \sum_{i=1}^N s_i - \lambda\rho. \\
+    & \text{s.t.} & & \inf_{x} \{ \mathbbm{1}_{\cl(Q)^{\mathsf{c}}}(x) + \lambda \lVert x-\hat{z}_i \rVert \} \geq s_i, \, \forall i \in \{1,\dots,N\}.
+  \end{aligned}
+\end{equation}
+Since the objective function changed from last section but the assertion that we
+want to write it as a minimum of convex lsc functions still hold we consider
+\begin{equation*}
+ \tilde{l}_j(x) :=
+ \begin{cases}
+   1 & \langle {a_j, x} \rangle \geq b_j \\
+   +\infty & \text{otherwise}
+ \end{cases}
+\end{equation*}
+for all $j \in \{1,\dots,N\}$ and
+\begin{equation*}
+  \tilde{l}_{N+1}(x) :=
+  \begin{cases}
+    0 & x \in \cl (Q) \\
+    +\infty & \text{otherwise.}
+  \end{cases}
+\end{equation*}
+Clearly $\mathbbm{1}_{\cl(Q)^{\mathsf{c}}} = \min_{1\le j \le N+1} \tilde{l}_j$.
+Thus we can rewrite the original problem in a similar fashion as before 
+\begin{equation*}
+  \begin{aligned}
+    & \sup_{\lambda \ge 0, s_i,v_i} & & \frac{1}{N} \sum_{i=1}^N s_i - \lambda\rho. \\
+    & \text{s.t.} & & \tilde{l}_j^*(v_i) - \langle {v_i, \hat{z}_i} \rangle \le - s_i, \, \forall i \in \{1,\dots,N\}, \forall j \in \{1,\dots,N+1\} \\
+    & & & \lVert {v_i} \rVert_*\le\lambda , \, \forall i \in \{1,\dots,N\}.
+  \end{aligned}
+\end{equation*}
+
+
+
+\section*{Problem 2}
+\label{sec:problem_two}
+
+\subsection*{Worst-Case conditional Value-at-Risk}
+\label{sec:loss}
+The conditional value-at-risk at a level $\epsilon \in 0,1$ of the uncertain
+loss $\ell(z)$ is defined as
+\begin{equation}
+  \label{eq:cvar}
+  \begin{aligned}
+    \P-\cvar_{\epsilon}(\ell (\tilde{z})) := \inf_{\beta \in \R} \beta +\frac{1}{\epsilon} \E_{\P} \left[ \max\{\ell (\tilde{z}) - \beta, 0 \} \right].
+  \end{aligned}
+\end{equation}
+
+
+Now we want to derive a finite convex program whose optimal value coincides with
+the worst case conditional value-at-risk given by
+\begin{equation}
+  \label{eq:op_two}
+  \begin{aligned}
+    \sup_{\P \in \ball_{\rho}(\hat{\P}_{N})} \P-\cvar_{\epsilon}( \ell(\tilde{z}) ). 
+  \end{aligned}
+\end{equation}
+By the hint given to us we may assume that
+\begin{equation}
+  \label{eq:op_hint}
+  \begin{aligned}
+    \sup_{\P \in \ball_{\rho}(\hat{\P}_{N})} \P-\cvar_{\epsilon}( \ell(\tilde{z}) ) = \inf_{\beta \in \R} + \frac{1}{\epsilon} \sup_{\P \in \ball_{\rho}(\hat{\P}_{N})} \E_{\P} \left[ \max\{ \ell (\tilde{z}) - \beta, 0 \} \right],
+  \end{aligned}
+\end{equation}
+which basically corresponds to an exchange of the order of the $\sup$ over the
+measures and the $\inf$ over $\beta$.
+By means of the same arguments made above in \eqref{eq:reform} and
+\eqref{eq:joint} this can be rewritten as
+\begin{equation}
+  \label{eq:sumi}
+  \begin{aligned}
+  & \inf_{\beta \in \R} & & \beta + \frac{1}{N\epsilon} \sum_{i=1}^N \sup_{\P_i} \int \max\{ \ell (z) - \beta, 0 \} \diff \P_i(z) \\
+  & \text{s.t.} & & \frac{1}{N} \sum_{i=1}^N \int \lVert z-\hat{z}_i  \rVert \diff \P_i(z) \le \rho.
+  \end{aligned}
+\end{equation}
+By strong duality Problem \eqref{eq:sumi} is equivalent to
+\begin{equation}
+  \label{eq:duality}
+  \begin{aligned}
+  & \inf_{\beta \in \R, \lambda\geq0} & & \beta + \frac{1}{N\epsilon} \sum_{i=1}^N \sup_{\P_i} \int \max\{ \ell (z) - \beta, 0 \} + \lambda (\rho - \lVert z-\hat{z}_i  \rVert) \diff \P_i(z). \\
+  \end{aligned}
+\end{equation}
+Again, we argue that each integral is maximized by the largest expression
+inside. Furthermore, we introduce auxiliary epigraphical variables $s_i$ for $i
+\in \{1,\dots,N\}$ giving
+\begin{equation}
+  \label{eq:sup}
+  \begin{aligned}
+    & \inf_{\beta \in \R, \lambda\geq0, (s_i)_{i=1,\dots,N}} & & \beta + \frac{\lambda\rho}{\epsilon} + \frac{1}{N\epsilon} \sum_{i=1}^N s_i \\
+    & \text{s.t.} & & \sup_{z \in Z}\{ \max\{ \ell (z) - \beta, 0 \} - \lambda \lVert z-\hat{z}_i  \rVert \} \le s_i.
+  \end{aligned}
+\end{equation}
+Now we want to investigate the constraint in \eqref{eq:sup} more closely.
+Obviously the following holds true
+\begin{equation}
+  \label{eq:inequality}
+  \begin{aligned}
+    & \sup_{z \in Z}\{ \max\{ \ell (z) - \beta, 0 \} - \lambda \lVert z-\hat{z}_i  \rVert \} \le s_i \\
+    \Leftrightarrow & \max\{ \ell (z) - \beta, 0 \} - \lambda \lVert z-\hat{z}_i  \rVert \} \le s_i, \, \forall z \in Z \\
+    \Leftrightarrow & \forall z \in Z :
+    \begin{cases}
+      \ell (z) - \beta - \lambda \lVert z-\hat{z}_i  \rVert \} \le s_i \\
+      - \lambda \lVert z-\hat{z}_i \rVert \le s_i.
+    \end{cases}
+  \end{aligned}
+\end{equation}
+The very last inequality just turns into a nonnegativity constraint for $s_i$
+while the second to last can be rewritten as
+\begin{equation}
+  \label{eq:dual_norm}
+  \begin{aligned}
+    & \ell (z) - \beta - \lambda \lVert z-\hat{z}_i \rVert \le s_i, \, \forall z \in Z \\
+    \Leftrightarrow & \ell (z) - \beta - \max_{v_i:\lVert {v_i} \rVert_*\le \lambda} \langle v_i, z-\hat{z}_i \rangle \le s_i, \, \forall z \in Z \\
+    \Leftrightarrow & \sup_{z \in Z} \min_{v_i:\lVert {v_i} \rVert_*\le \lambda} \ell(z) - \beta - \langle v_i, z-\hat{z}_i \rangle \le s_i \\
+    \overset{(*)}{\Leftrightarrow} &  \min_{v_i:\lVert {v_i} \rVert_*\le \lambda} \sup_{z \in Z} \ell(z) - \beta - \langle v_i, z-\hat{z}_i \rangle \le s_i \\
+    \Leftrightarrow &
+    \begin{cases}
+      \sup_{z \in Z} \ell(z) - \langle v_i, z\rangle + \langle v_i, \hat{z}_i \rangle -\beta \le s_i \\
+      \lVert {v_i} \rVert_* \le \lambda 
+    \end{cases}\\
+    \Leftrightarrow &
+     \begin{cases}
+       [-\ell+ \chi_Z]^*(v_i) - \langle v_i, \hat{z}_i \rangle -\beta \le s_i \\
+      \lVert {v_i} \rVert_* \le \lambda, 
+    \end{cases}\\
+  \end{aligned}
+\end{equation}
+where $(*)$ holds because of strong duality and $*$ denotes the Fenchel conjugate.
+Combinig \eqref{eq:dual_norm}, \eqref{eq:inequality} and \eqref{eq:sup} gives
+\begin{equation}
+  \label{eq:put_it_all_together}
+  \begin{aligned}
+    & \inf_{\beta \in \R, \lambda} & & \beta + \frac{\lambda\rho}{\epsilon} + \frac{1}{N\epsilon} \sum_{i=1}^N s_i \\
+    & \text{s.t.} & & [-\ell+ \chi_Z]^*(v_i) - \langle v_i, \hat{z}_i \rangle -\beta \le s_i \\
+      & & & \lVert {v_i} \rVert_* \le \lambda \\
+      & & & \lambda, s_i, v_i \geq 0, \, \forall i \in \{1,\dots,N\}  
+  \end{aligned}
+\end{equation}
+Lastly, we look at $[-\ell+ \chi_Z]^*(v_i)$ and plug in the definition of $\ell$
+and see that
+\begin{equation}
+  \label{eq:conjugate}
+  [-\ell+ \chi_Z]^*(v_i) = \sup_{z \in Z} \langle {v_i,z} \rangle - \langle {-a, z} \rangle + b = \sup_{z \in Z} \langle {v_i + a, z} \rangle + b = \sigma_Z(v_i + a) + b,
+\end{equation}
+where $\sigma_Z(\cdot)$ denotes the support function of the set $Z$. Combinig
+\eqref{eq:put_it_all_together} and \eqref{eq:conjugate} yields
+\begin{equation}
+  \label{eq:defin_of_loss}
+  \begin{aligned}
+    & \inf_{\beta \in \R, \lambda, (s_i), (v_i)}} & & \beta + \frac{\lambda\rho}{\epsilon} + \frac{1}{N\epsilon} \sum_{i=1}^N s_i \\
+    & \text{s.t.} & & \sigma_Z(v_i + a) + b - \langle v_i, \hat{z}_i \rangle -\beta \le s_i \\
+     & & & \lVert {v_i} \rVert_* \le \lambda \\
+     & & & \lambda, s_i, v_i \geq 0, \, \forall i \in \{1,\dots,N\}.  
+  \end{aligned}
+\end{equation}
+
+
+\subsection*{Loss function depends on $x$}
+Previously we assumed that the loss function $\ell$ only depends on the random
+variable $\tilde{z}$ and does so in an affine way. Now, however we let the
+coefficients depend on some decision $x$ which is made with the objective to
+minimize the loss, i.e.
+\begin{equation*}
+ \ell(x,z) := \langle {a(x), z} \rangle + b(x).
+\end{equation*}
+We assume that the dependence of the coefficients on $x$ is also affine, meaning
+the loss function is given by
+\begin{equation*}
+ \ell(x,z) = \langle {Ax + a_0, z} \rangle + \langle {b,x} \rangle + b_0.
+\end{equation*}
+Considering the reformulation we derived previously, in particular
+\eqref{eq:defin_of_loss}, the new objective is now given by
+\begin{equation}
+  \label{eq:final}
+  \begin{aligned}
+    & \inf_{x, \beta \in \R, \lambda, (s_i), (v_i)}} & & \beta + \frac{\lambda\rho}{\epsilon} + \frac{1}{N\epsilon} \sum_{i=1}^N s_i \\
+    & \text{s.t.} & & \sigma_Z(v_i + a_0 + Ax ) + \langle {b,x} \rangle + b_0 - \langle v_i, \hat{z}_i \rangle -\beta \le s_i \\
+     & & & \lVert {v_i} \rVert_* \le \lambda \\
+     & & & \lambda, s_i, v_i \geq 0, \, \forall i \in \{1,\dots,N\}.  
+  \end{aligned}
+\end{equation}
+Due to the fact that the composition of linear operators with convex functions
+remains convex, so does problem \eqref{eq:final}.
+
+
+
+
+
+
+\bibliographystyle{plain}
+\bibliography{bibfile}
+
+\end{document}
