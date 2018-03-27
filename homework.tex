@@ -220,7 +220,8 @@ By the hint given to us we may assume that
 \begin{equation}
   \label{eq:op_hint}
   \begin{aligned}
-    \sup_{\P \in \ball_{\rho}(\hat{\P}_{N})} \P-\cvar_{\epsilon}( \ell(\tilde{z}) ) = \inf_{\beta \in \R} + \frac{1}{\epsilon} \sup_{\P \in \ball_{\rho}(\hat{\P}_{N})} \E_{\P} \left[ \max\{ \ell (\tilde{z}) - \beta, 0 \} \right],
+    \sup_{\P \in \ball_{\rho}(\hat{\P}_{N})} \P-\cvar_{\epsilon}( \ell(\tilde{z}) ) =
+    \inf_{\beta \in \R} \beta + \frac{1}{\epsilon} \sup_{\P \in \ball_{\rho}(\hat{\P}_{N})} \E_{\P} \left[ \max\{ \ell (\tilde{z}) - \beta, 0 \} \right],
   \end{aligned}
 \end{equation}
 which basically corresponds to an exchange of the order of the $\sup$ over the
@@ -334,7 +335,7 @@ Considering the reformulation we derived previously, in particular
 \begin{equation}
   \label{eq:final}
   \begin{aligned}
-    & \inf_{x, \beta \in \R, \lambda, (s_i), (v_i)}} & & \beta + \frac{\lambda\rho}{\epsilon} + \frac{1}{N\epsilon} \sum_{i=1}^N s_i \\
+    & \inf_{x, \beta \in \R, \lambda, (s_i), (v_i)} & & \beta + \frac{\lambda\rho}{\epsilon} + \frac{1}{N\epsilon} \sum_{i=1}^N s_i \\
     & \text{s.t.} & & \sigma_Z(v_i + a_0 + Ax ) + \langle {b,x} \rangle + b_0 - \langle v_i, \hat{z}_i \rangle -\beta \le s_i \\
      & & & \lVert {v_i} \rVert_* \le \lambda \\
      & & & \lambda, s_i, v_i \geq 0, \, \forall i \in \{1,\dots,N\}.  
